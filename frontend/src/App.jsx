@@ -1,48 +1,49 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+
 import Hero from './components/Hero';
 import FeaturedCars from './components/FeaturedCars';
 import Process from './components/Process';
 import ContactForm from './components/ContactForm';
-import Footer from './components/Footer';
-import Vehiculos from './pages/Vehiculos';
 
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import AutoDetalle from './pages/AutoDetalle';
+
 
 function Home() {
-  useEffect(() => {
-    AOS.init({ duration: 800, once: true });
-  }, []);
-
   return (
     <>
-    <div className="bg-red-500 text-white p-4 text-xl font-bold">
-  Tailwind está funcionando
-</div>
-
-      <Navbar />
-      <main className="pt-24">
-        <Hero />
-        <FeaturedCars />
-        <Process />
-        <ContactForm />
-      </main>
-      <Footer />
+      <Hero />
+      <FeaturedCars />
+      <Process />
+      <ContactForm />
     </>
   );
 }
 
 export default function App() {
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
+
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/autos" element={<Vehiculos />} />
-        {/* Puedes agregar aquí una ruta como <Route path="/autos/:modelo" element={<AutoDetalle />} /> */}
-      </Routes>
+      {/* Siempre visibles */}
+      <Navbar />
+
+      <main className="pt-24">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/autos/:modelo" element={<AutoDetalle />} />
+        </Routes>
+      </main>
+
+      {/* Siempre visible */}
+      <Footer />
     </Router>
   );
 }

@@ -1,25 +1,53 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleNavClick = (e, targetId) => {
+    e.preventDefault();
+    setOpen(false);
+
+    if (location.pathname !== '/') {
+      // Redirige al home y pasa el ID por estado
+      navigate('/', { state: { scrollTo: targetId } });
+    } else {
+      scrollToSection(targetId);
+    }
+  };
+
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    setOpen(false);
+
+    if (location.pathname !== '/') {
+      navigate('/');
+    } else {
+      scrollToSection('inicio');
+    }
+  };
 
   // Mostrar/ocultar navbar en scroll
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 60) {
-        setIsVisible(false); // hacia abajo
-      } else {
-        setIsVisible(true); // hacia arriba
-      }
+      setIsVisible(currentScrollY < lastScrollY || currentScrollY < 60);
       setLastScrollY(currentScrollY);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
@@ -32,6 +60,14 @@ export default function Navbar() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Si vienes de otra página con scrollTo
+  useEffect(() => {
+    if (location.pathname === '/' && location.state?.scrollTo) {
+      const target = location.state.scrollTo;
+      setTimeout(() => scrollToSection(target), 100); // Espera a que renderice
+    }
+  }, [location]);
 
   const links = [
     { name: 'Inicio', href: '#inicio' },
@@ -47,8 +83,8 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* Logo + Nombre */}
-        <a href="#inicio" className="flex items-center space-x-3">
+        {/* Logo */}
+        <a href="#inicio" onClick={handleLogoClick} className="flex items-center space-x-3">
           <img src={logo} alt="AutoKlic" className="h-10 w-auto md:h-14" />
           <span className="text-xl md:text-2xl font-bold text-gray-800 tracking-tight">
             AutoKlic
@@ -61,6 +97,7 @@ export default function Navbar() {
             <a
               key={link.name}
               href={link.href}
+              onClick={(e) => handleNavClick(e, link.href.substring(1))}
               className="text-gray-700 hover:text-blue-600 hover:underline underline-offset-8 decoration-2 transition duration-300 ease-in-out"
             >
               {link.name}
@@ -68,26 +105,20 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Mobile Toggle */}
+        {/* Mobile Menu Toggle */}
         <button
           onClick={() => setOpen(!open)}
           className="md:hidden p-1 text-gray-800 hover:text-blue-600 transition-colors duration-200"
           aria-label="Toggle menu"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
         >
-          {open ? (
-            <XMarkIcon className="h-6 w-6" />
-          ) : (
-            <Bars3Icon className="h-6 w-6" />
-          )}
+          {open ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
         </button>
       </div>
 
       {/* Mobile Menu */}
       <div
         id="mobile-menu"
-        className={`md:hidden bg-white shadow-lg transition-all duration-300 ease-in-out overflow-hidden ${
+        className={`md:hidden bg-white shadow-lg transition-all duration-300 overflow-hidden ${
           open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
@@ -96,7 +127,7 @@ export default function Navbar() {
             <a
               key={link.name}
               href={link.href}
-              onClick={() => setOpen(false)}
+              onClick={(e) => handleNavClick(e, link.href.substring(1))}
               className="text-gray-700 text-base font-medium hover:text-blue-600 hover:underline underline-offset-4 decoration-2 transition duration-300"
             >
               {link.name}

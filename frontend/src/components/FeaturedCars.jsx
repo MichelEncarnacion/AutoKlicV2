@@ -55,7 +55,7 @@ export default function FeaturedCars() {
           })}
         </div>
 
-        {/* Botón Ver más */}
+        {/* Botón Ver más sin funcionalidad */}
         <div className="mt-16 text-center">
           <a
             href="/autos"
