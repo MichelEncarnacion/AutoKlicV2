@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Slim\App;
@@ -11,19 +12,19 @@ return function (App $app): void {
 
     // Obtener todos los vehículos
     $app->get('/vehiculos', function (Request $request, Response $response) {
-    $pdo = getPDO();
-    $stmt = $pdo->query("
+        $pdo = getPDO();
+        $stmt = $pdo->query("
         SELECT v.*, m.url AS imagen
         FROM vehiculo v
         LEFT JOIN multimedia m 
             ON m.vehiculo_id = v.id AND m.es_principal = true
         ORDER BY v.fecha_ingreso DESC
     ");
-    $vehiculos = $stmt->fetchAll();
+        $vehiculos = $stmt->fetchAll();
 
-    $response->getBody()->write(json_encode($vehiculos));
-    return $response->withHeader('Content-Type', 'application/json');
-});
+        $response->getBody()->write(json_encode($vehiculos));
+        return $response->withHeader('Content-Type', 'application/json');
+    });
 
 
     // Agregar un nuevo vehículo
@@ -37,9 +38,16 @@ return function (App $app): void {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ");
         $stmt->execute([
-            $data['marca'], $data['modelo'], $data['año'], $data['color'],
-            $data['tipo_combustible'], $data['transmision'], $data['precio'],
-            $data['estado'], $data['kilometraje'], $data['tipo']
+            $data['marca'],
+            $data['modelo'],
+            $data['año'],
+            $data['color'],
+            $data['tipo_combustible'],
+            $data['transmision'],
+            $data['precio'],
+            $data['estado'],
+            $data['kilometraje'],
+            $data['tipo']
         ]);
 
         $response->getBody()->write(json_encode(['success' => true]));
@@ -59,9 +67,17 @@ return function (App $app): void {
             WHERE id = ?
         ");
         $stmt->execute([
-            $data['marca'], $data['modelo'], $data['año'], $data['color'],
-            $data['tipo_combustible'], $data['transmision'], $data['precio'],
-            $data['estado'], $data['kilometraje'], $data['tipo'], $id
+            $data['marca'],
+            $data['modelo'],
+            $data['año'],
+            $data['color'],
+            $data['tipo_combustible'],
+            $data['transmision'],
+            $data['precio'],
+            $data['estado'],
+            $data['kilometraje'],
+            $data['tipo'],
+            $id
         ]);
 
         $response->getBody()->write(json_encode(['success' => true]));
@@ -82,8 +98,8 @@ return function (App $app): void {
 
     //Landig Page Autos
     $app->get('/landing/destacados', function (Request $request, Response $response) {
-    $pdo = getPDO();
-    $stmt = $pdo->query("
+        $pdo = getPDO();
+        $stmt = $pdo->query("
         SELECT v.id, v.marca, v.modelo, v.precio, m.url AS imagen
         FROM vehiculo v
         LEFT JOIN multimedia m ON m.vehiculo_id = v.id AND m.es_principal = true
@@ -91,17 +107,12 @@ return function (App $app): void {
         ORDER BY v.fecha_ingreso DESC
         LIMIT 6
     ");
-    $resultados = $stmt->fetchAll();
+        $resultados = $stmt->fetchAll();
 
-    $response->getBody()->write(json_encode($resultados));
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-
+        $response->getBody()->write(json_encode($resultados));
+        return $response->withHeader('Content-Type', 'application/json');
+    });
 
 
-
-
-
-
+    
 };
