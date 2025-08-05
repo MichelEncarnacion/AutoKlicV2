@@ -113,4 +113,12 @@ class UserRepository
         $stmt = $this->db->prepare("UPDATE usuario SET activo = 0 WHERE id = :id");
         $stmt->execute([':id' => $id]);
     }
+    public function activate(int $id): void
+    {
+        $sql = "UPDATE usuario
+            SET activo = 1
+            WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $id]);
+    }
 }

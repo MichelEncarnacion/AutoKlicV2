@@ -85,4 +85,11 @@ class UserController
         $this->repo->deactivate((int)$args['id']);
         return $res->withStatus(204);
     }
+
+    public function activate(Request $req, Response $res, array $args): Response
+{
+    $id = (int)$args['id'];
+    $this->repo->activate($id);
+    return $res->withStatus(204);
+}
 }

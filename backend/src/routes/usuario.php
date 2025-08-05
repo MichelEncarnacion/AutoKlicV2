@@ -22,6 +22,8 @@ return function(App $app): void {
         $g->put('/{id}/role',     [$controller, 'changeRole']);
         $g->put('/{id}/password', [$controller, 'resetPassword']);
         $g->patch('/{id}/deactivate', [$controller, 'deactivate']);
+        $g->patch('/{id}/activate', UserController::class . ':activate');
+
     })
     ->add(new RoleMiddleware(['admin']))
     ->add(new JwtMiddleware());
